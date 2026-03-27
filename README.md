@@ -1,6 +1,6 @@
 ## Installation
 
 ```bash
-git clone https://github.com/yourname/tiddl.git
+git clone https://github.com/petbarik/tiddl-pet.git
 cd tiddl
 pip install .
