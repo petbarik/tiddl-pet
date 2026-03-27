@@ -2,9 +2,13 @@
 
 #Mac/Linux
 ```bash
-git clone https://github.com/petbarik/tiddl-pet.git && cd tiddl-pet && python3.13 -m pip install --upgrade pip setuptools wheel && python3.13 -m pip install . && tiddl --help
+brew install pipx
+pipx ensurepath
+pipx install git+https://github.com/petbarik/tiddl-pet.git
 ```
 #Windows
 ```bash
-git clone https://github.com/petbarik/tiddl-pet.git; cd tiddl-pet; py -3.13 -m pip install --upgrade pip setuptools wheel; py -3.13 -m pip install .; tiddl --help
+py -m pip install --user pipx
+py -m pipx ensurepath
+pipx install git+https://github.com/petbarik/tiddl-pet.git
 ```
