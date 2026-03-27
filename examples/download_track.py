@@ -5,7 +5,7 @@ from tiddl.core.metadata import add_track_metadata
 from tiddl.core.api.models import TrackQuality
 
 # we reuse Tidal API from another example
-from .fetch_api import api
+from fetch_api import api
 
 # Congratulations by Post Malone
 TRACK_ID = 77662595

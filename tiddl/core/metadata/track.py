@@ -7,6 +7,7 @@ from mutagen.easymp4 import EasyMP4 as MutagenEasyMP4
 from mutagen.mp4 import MP4 as MutagenMP4, MP4Cover
 
 from tiddl.core.api.models import AlbumItemsCredits, Track
+from tiddl.core.metadata.cover import Cover
 
 
 @dataclass(slots=True)
@@ -32,11 +33,13 @@ class Metadata:
 def add_flac_metadata(track_path: Path, metadata: Metadata) -> None:
     mutagen = MutagenFLAC(track_path)
 
-    if metadata.cover_data:
+    if metadata.cover_data is not None and len(metadata.cover_data) > 0:
         picture = Picture()
         picture.data = metadata.cover_data
         picture.mime = "image/jpeg"
-        picture.type = 3  # front cover
+        picture.type = 3
+        picture.desc = "Cover"
+        mutagen.clear_pictures()
         mutagen.add_picture(picture)
 
     if metadata.date:
@@ -74,7 +77,8 @@ def add_flac_metadata(track_path: Path, metadata: Metadata) -> None:
 def add_m4a_metadata(track_path: Path, metadata: Metadata) -> None:
     mutagen = MutagenMP4(track_path)
 
-    if metadata.cover_data:
+    if metadata.cover_data is not None and len(metadata.cover_data) > 0:
+        mutagen.pop("covr", None)
         mutagen["covr"] = [
             MP4Cover(metadata.cover_data, imageformat=MP4Cover.FORMAT_JPEG)
         ]
@@ -109,12 +113,6 @@ def add_m4a_metadata(track_path: Path, metadata: Metadata) -> None:
 def sort_credits_contributors(
     entries: list[AlbumItemsCredits.ItemWithCredits.CreditsEntry],
 ):
-    """
-    Sorts the contributors within each CreditsEntry alphabetically by surname.
-
-    It assumes the surname is the last word in the contributor's name.
-    """
-
     def get_surname(name: str) -> str:
         parts = name.split()
         return parts[-1] if parts else ""
@@ -144,6 +142,16 @@ def add_track_metadata(
 
     sort_credits_contributors(credits_contributors)
 
+    cover_obj = None
+
+    if cover_data is not None and len(cover_data) > 0:
+        cover_obj = cover_data
+    else:
+        try:
+            cover_obj = Cover(track.album.cover).fetch_data()
+        except Exception:
+            cover_obj = None
+
     metadata = Metadata(
         title=f"{track.title} ({track.version})" if track.version else track.title,
         track_number=str(track.trackNumber),
@@ -156,7 +164,7 @@ def add_track_metadata(
         isrc=track.isrc,
         bpm=str(track.bpm or ""),
         lyrics=lyrics or None,
-        cover_data=cover_data,
+        cover_data=cover_obj,
         credits=credits_contributors,
         comment=comment,
     )
