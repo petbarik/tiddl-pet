@@ -3,12 +3,12 @@
 #Mac/Linux
 ```bash
 brew install pipx
-pipx ensurepath
 pipx install git+https://github.com/petbarik/tiddl-pet.git
+pipx ensurepath
 ```
 #Windows
 ```bash
 py -m pip install --user pipx
-py -m pipx ensurepath
 pipx install git+https://github.com/petbarik/tiddl-pet.git
+py -m pipx ensurepath
 ```
